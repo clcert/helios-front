@@ -19,6 +19,7 @@ import CreateCustodio from "./pages/Admin/CustodioClaves/CreateCustodio";
 import Booth from "./pages/Booth/Booth";
 import CheckSk from "./pages/Admin/CustodioClaves/CheckSk";
 import DecryptProve from "./pages/Admin/CustodioClaves/DecryptProve";
+import CustodioPanel from "./pages/Admin/CustodioClaves/CustodioPanel";
 import Statistics from "./pages/Admin/Statistics/Statistics";
 import InfoBoothView from "./pages/Booth/Panel/InfoBoothView";
 import News from "./pages/News/News";
@@ -207,6 +208,11 @@ function App() {
         <Route
           path=":shortName/trustee/:uuidTrustee/home"
           element={<CustodioHome />}
+        />
+
+        <Route
+          path="trustee/panel"
+          element={<CustodioPanel />}
         />
 
         <Route path=":shortName/trustee/home" element={<CustodioHome />} />

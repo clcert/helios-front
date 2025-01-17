@@ -1,7 +1,11 @@
-function InfoTrustee(props) {
+import { trusteeStep } from "../../../../constants";
+
+function InfoTrustee({ trustee }) {
+  const hasDecryption = trustee.current_step === trusteeStep.decryptions_sent;
+
   return (
     <div>
-      {props.trustee.current_step === 5 ? (
+      {hasDecryption ? (
         <p
           id="decryption-finish"
           className="has-text-weight-bold is-size-5 status-decryption is-flex is-flex-direction-column"
@@ -11,7 +15,7 @@ function InfoTrustee(props) {
       ) : (
         <p
           id={
-            props.trustee.decryptions ? "decryption-finish" : "decryption-wait"
+            hasDecryption ? "decryption-finish" : "decryption-wait"
           }
           className="has-text-weight-bold is-size-5 status-decryption is-flex is-flex-direction-column"
         >

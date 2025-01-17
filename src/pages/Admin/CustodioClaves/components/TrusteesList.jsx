@@ -1,15 +1,12 @@
-import { useCallback, useState } from "react";
-import { useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getTrustees } from "../../../../services/trustee";
 import InfoTrustee from "./InfoTrustee";
 import { electionStatus } from "../../../../constants";
 
-function TrusteesList(props) {
-  /** @state {array} trustees list */
+function TrusteesList({ election, deleteTrustee }) {
   const [trustees, setTrustees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
   const { shortName } = useParams();
 
   const initComponent = useCallback(() => {
@@ -22,7 +19,7 @@ function TrusteesList(props) {
   useEffect(() => {
     initComponent();
   }, [initComponent]);
-
+  
   useEffect(
     function effectFunction() {
       let interval = setInterval(() => {
@@ -52,56 +49,51 @@ function TrusteesList(props) {
           Lista de custodios
         </div>
       )}
-      {trustees.map((t, index) => {
-        return (
-          <div className="box border-style-box" key={t.name}>
+      {trustees.map((trustee, index) => (
+        <div className="box border-style-box" key={trustee.name}>
             <div className="level mb-0">
               <span className="has-text-weight-bold is-size-4 level-item">
                 Custodio de Clave #{index + 1}
               </span>
-              {props.election.election_status === "Setting up" && (
+            {election.status === "Setting up" && (
                 <span className="level-right">
                   <i
                     className="close-question fa-solid fa-trash"
-                    onClick={() => {
-                      props.deleteTrustee(t.uuid);
-                    }}
+                  onClick={() => deleteTrustee(trustee.uuid)}
                   />
                 </span>
               )}
             </div>
 
             <p className="mt-0">
-              <span className="has-text-weight-bold is-size-4">{t.name}</span>
+            <span className="has-text-weight-bold is-size-4">{trustee.name}</span>
+            <br />
+            <tt>
+              {trustee.username}
               <br />
-              <tt>
-                {t.trustee_login_id}
-                <br />
-                {t.email}
+              {trustee.email}
               </tt>
             </p>
 
-            {t.public_key_hash ? (
+          {trustee.public_key_hash ? (
               <div className="mt-4">
                 Código de Clave Pública:{" "}
                 <p className="overflow-auto">
-                  <tt>{t.public_key_hash}</tt>
+                <tt>{trustee.public_key_hash}</tt>
                 </p>
               </div>
             ) : (
               <p className="mt-4">Custodio aún no sube su clave pública</p>
             )}
 
-            {(props.election.election_status === electionStatus.tallyComputed ||
-              props.election.election_status ===
-                electionStatus.decryptionsUploaded ||
-              props.election.election_status ===
-                electionStatus.decryptionsCombined ||
-              props.election.election_status ===
-                electionStatus.resultsReleased) && <InfoTrustee trustee={t} />}
+          {[
+            electionStatus.tallyComputed,
+            electionStatus.decryptionsUploaded,
+            electionStatus.decryptionsCombined,
+            electionStatus.resultsReleased,
+          ].includes(election.status) && <InfoTrustee trustee={trustee} />}
           </div>
-        );
-      })}
+      ))}
     </div>
   );
 }

@@ -25,7 +25,13 @@ export function OptionInputRadio({
           onChange={() => console.log('changed answer')}
           checked={isSelected}
         />
-        <span className="is-size-5">{optionLabel}</span>
+        {/* <span className="is-size-5">{optionLabel}</span> */}
+        <div className="ml-1 is-flex is-flex-direction-column">
+          {optionLabel.split("(").map((candidateInfo, index) => (
+            (index === 0) ? <span className={"is-size-5"}> {candidateInfo} </span> : 
+            <span className={"is-size-6"}> {"(" + candidateInfo} </span>
+          ))}
+        </div>
       </label>
     </div>
   );
@@ -36,9 +42,9 @@ function InputRadio({
   question,
   questionId,
 }) {
-  const { include_blank_null } = question;
-  const includeInformalAns = include_blank_null;
-  const closed_options = question.closed_options_list;
+  const { include_informal_options } = question;
+  const includeInformalAns = include_informal_options;
+  const formal_options = question.formal_options;
 
   let answers = useSelector((state) => state.booth.answers)[questionId];
   answers = answers ? answers : [];
@@ -48,8 +54,7 @@ function InputRadio({
   }
   return (
     <div>
-      {closed_options.map((key, index) => {
-        if (!includeInformalAns || index < closed_options.length - 2)
+      {formal_options.map((key, index) => {
           return (
             <OptionInputRadio
               optionId={index}
@@ -59,7 +64,6 @@ function InputRadio({
               inputHandler={handlerInput}
             />
           );
-        else return null;
       })}
     </div>
   );

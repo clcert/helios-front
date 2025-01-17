@@ -104,10 +104,9 @@ export default function CalculatedResults({
   const [actualTab, setActualTab] = useState(0);
 
   const tabs = ["Total elección", "Por grupos"];
-
   return (
     <>
-      {election.grouped && (
+      {election.grouped_voters && (
         <Tabs actualTab={actualTab} setActualTab={setActualTab} tabs={tabs} />
       )}
       {actualTab === 0 && (

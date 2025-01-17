@@ -32,7 +32,7 @@ function UrnaTable({ election, electionVoters }) {
         </Tr>
       </Thead>
       {electionVoters.map((voter, index) => {
-        const voterHash = voter.cast_vote ? voter.cast_vote.vote_hash : "-";
+        const voterHash = voter.cast_vote ? voter.cast_vote.encrypted_ballot_hash : "-";
         return (
           <Tbody key={index}>
             <Tr>
@@ -51,14 +51,14 @@ function UrnaTable({ election, electionVoters }) {
                     (hashUrl === voterHash ? "hash-selected" : "")
                   }
                 >
-                  {election.normalization ? (
+                  {election.normalized ? (
                     <span>
                       {parseFloat(
-                        (voter.voter_weight / election.max_weight).toFixed(3)
+                        (voter.weight_init / election.max_weight).toFixed(3)
                       )}
                     </span>
                   ) : (
-                    <span>{voter.voter_weight} </span>
+                    <span>{voter.weight_init} </span>
                   )}
                 </Td>
               )}
@@ -71,7 +71,7 @@ function UrnaTable({ election, electionVoters }) {
                 {voterHash !== "-" ? (
                   <div
                     onClick={() => {
-                      openWindowVote(voter.cast_vote.vote_hash);
+                      openWindowVote(voter.cast_vote.encrypted_ballot_hash);
                     }}
                     className="button-redirect-vote ml-2 mr-2"
                   >

@@ -1,5 +1,6 @@
 import {
-    getStats, getElectionPublic, getElectionResume, getCountDates,
+    getStats, getElectionPublic, getCountDates,
+    getVotersInit,
 } from "../../../../../services/election";
 import { logout } from "../../../../../utils/utils";
 
@@ -26,7 +27,7 @@ export const requestElectionPublic = (shortName, setElection) => {
 }
 
 export const requestElectionResume = (shortName, setWeightsInit, setWeightsElection) => {
-    getElectionResume(shortName).then((election) => {
+    getVotersInit(shortName).then((election) => {
         const { resp, jsonResponse } = election;
         if (resp.status === 200) {
           if(!jsonResponse.weights_init) return;

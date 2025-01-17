@@ -6,12 +6,12 @@ export default function RollCharacteristics({ election }) {
   return(
     <ShowStatistics
       notAvailableMessage={
-        isSettingUpElection(election.election_status)
+        isSettingUpElection(election.status)
         ? "La elección aun no comienza"
         : "La elección tiene padrón abierto"
       }
       showNotAvailableMessage={election && (
-        isSettingUpElection(election.election_status) || isOpenLoginElection(election.election_login_type))
+        isSettingUpElection(election.status) || isOpenLoginElection(election.election_login_type))
       }
       isLoadData={Boolean(election)}
       statisticsComponent={<RollCharacteristicsStats

@@ -39,3 +39,11 @@ export const singularOrPlural = (singular, plural, count) => {
   if (Boolean(plural)) { return plural }
   return `${singular}s`
 }
+
+
+export const searchTrusteeCrypto = (trustee, election_id) => {
+  const trusteeCrypto = trustee.trustee_crypto.find(
+    (tc) => tc.election_id === election_id
+  );
+  return trusteeCrypto;
+}

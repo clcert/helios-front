@@ -8,7 +8,7 @@ function ShowAnswer({ questionType, indexAnswer, numOptions, index, answer }) {
   return (
     Boolean(answer) && (
       !isMixNetQuestion(questionType)
-      || indexAnswer < numOptions - 2
+      || indexAnswer < numOptions
     ) && (
       <React.Fragment key={index}>
         <span key={index}>
@@ -52,14 +52,14 @@ function ShowAnswersList({ currentAns, questionType, closedOptions }) {
 
 
 function TextSelected({ answer, question }) {
-  const includeBlankNull = question.include_blank_null === "True";
-  const blankId = getBlankAnswerId(question.closed_options_list)
-  const nullId = getNullAnswerId(question.closed_options_list)
+  const includeBlankNull = question.include_informal_options;
+  const blankId = getBlankAnswerId(question.formal_options)
+  const nullId = getNullAnswerId(question.formal_options)
   if (answer.length === 0) {
     return <p>[ ] Ninguna opción seleccionada</p>;
   }
   else if (
-    includeBlankNull && usesMixNetTally(question.q_type)
+    includeBlankNull
   ) {
     if (
       answer.every((element) => element === blankId)
@@ -75,8 +75,8 @@ function TextSelected({ answer, question }) {
   return (
     <ShowAnswersList
       currentAns={answer}
-      questionType={question.q_type}
-      closedOptions={question.closed_options_list}
+      questionType={question.type}
+      closedOptions={question.formal_options}
     />
   );
 }

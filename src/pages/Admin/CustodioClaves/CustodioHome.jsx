@@ -6,7 +6,7 @@ import LoadPage from "../../../component/Loading/LoadPage";
 import TitlePsifos from "../../../component/OthersComponents/TitlePsifos";
 import MyNavbar from "../../../component/ShortNavBar/MyNavbar";
 import { backendOpIP } from "../../../server";
-import { getTrusteeHome } from "../../../services/trustee";
+import { getTrusteeCrypto } from "../../../services/trustee";
 import imageTrustees from "../../../static/svg/trustees1.svg";
 import NoAuth from "../../Booth/NoAuth";
 import StepButton from "./components/StepButton";
@@ -14,6 +14,7 @@ import SmallStepButton from "./components/SmallStepButton";
 
 function CustodioHome(props) {
   const [trustee, setTrustee] = useState([]);
+  const [trusteeCrypto, setTrusteeCrypto] = useState([]);
   const [election, setElection] = useState([]);
   const [load, setLoad] = useState(false);
   const [auth, setAuth] = useState(false);
@@ -25,17 +26,18 @@ function CustodioHome(props) {
   const { shortName, uuidTrustee } = useParams();
 
   const disabledButton1 = Boolean(
-    !trustee.public_key ||
-      (trustee.current_step >= 0 && trustee.current_step < 3)
+    !trusteeCrypto.public_key ||
+      (trusteeCrypto.current_step >= 0 && trusteeCrypto.current_step < 3)
       ? false
       : true
   );
 
-  const disabledButton2 = Boolean(trustee.public_key ? false : true);
+  const disabledButton2 = Boolean(trusteeCrypto.public_key ? false : true);
 
   const disabledButton3 = Boolean(
-    trustee.current_step === 4 &&
-      election.election_status === "Tally computed" 
+    trusteeCrypto.current_step === 4 &&
+      election.status === "Tally computed" &&
+      trusteeCrypto.decryptions === null
       ? false
       : true
   );
@@ -44,7 +46,7 @@ function CustodioHome(props) {
     if (searchParams.get("logout") === "true") {
       window.location.href = backendOpIP + "/" + shortName + "/trustee/login";
     }
-    getTrusteeHome(shortName, uuidTrustee).then((data) => {
+    getTrusteeCrypto(shortName, uuidTrustee).then((data) => {
       try {
         const { resp, jsonResponse } = data;
         const typeErrors = {
@@ -58,6 +60,7 @@ function CustodioHome(props) {
         if (resp.status === 200) {
           setAuth(true);
           setTrustee(jsonResponse.trustee);
+          setTrusteeCrypto(jsonResponse.trustee_crypto);
           setElection(jsonResponse.election);
         } else {
           const message =

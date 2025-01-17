@@ -33,21 +33,20 @@ function CardInfo({
   updateInfo,
   totalVoters,
   totalVotes,
+  trustees = [],
 }) {
   /** @state {num} number of decryptions */
   const [decryptionNumber, setDecryptionNumber] = useState(0);
 
   useEffect(() => {
     let number_decryptions = 0;
-    if (election.trustees) {
-      election.trustees.forEach((trustee) => {
-        if (trustee.decryptions !== "") {
-          number_decryptions++;
-        }
-      });
-    }
+    trustees.forEach((trustee) => {
+      if (trustee.decryptions !== "") {
+        number_decryptions++;
+      }
+    });
     setDecryptionNumber(number_decryptions);
-  }, [election.trustees, electionStep]);
+  }, [trustees, electionStep]);
 
   return (
     <div className="box ">
@@ -74,7 +73,7 @@ function CardInfo({
         <DisplayStats
           name="Tipo de votación"
           value={
-            election.election_type === "Election" ? "Elección" : "Consulta"
+            election.type === "Election" ? "Elección" : "Consulta"
           }
         />
         <DisplayStats name="Cantidad de votantes" value={totalVoters} />
@@ -88,26 +87,21 @@ function CardInfo({
           (electionStep === "Decryptions uploaded" && (
             <DisplayStats
               name="Desencriptaciones Parciales"
-              value={decryptionNumber / election.trustees.length}
+              value={decryptionNumber / election.total_trustees}
             />
           ))}
-
-        <DisplayTicket
-          name="Esconder nombre de los votantes"
-          condition={election.obscure_voter_names}
-        />
         <DisplayTicket
           name="Elección privada"
-          condition={election.election_login_type === electionLoginType.close_p}
+          condition={election.voters_login_type === electionLoginType.close_p}
         />
         <DisplayTicket
           name="Aleatorizar opciones"
           condition={election.randomize_answer_order}
         />
-        <DisplayTicket name="Elección agrupada" condition={election.grouped} />
+        <DisplayTicket name="Elección agrupada" condition={election.grouped_voters} />
         <DisplayTicket
           name="Normalización"
-          condition={election.normalization}
+          condition={election.normalized}
         />
       </div>
     </div>

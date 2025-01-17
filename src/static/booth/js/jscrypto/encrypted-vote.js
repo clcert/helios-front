@@ -12,7 +12,7 @@ class EncryptedVote {
 
 
     // keep information about the election around
-    this.election_uuid = election.uuid;
+    this.short_name = election.short_name;
     this.election_hash = election.get_hash();
     this.election = election;
 
@@ -39,7 +39,7 @@ class EncryptedVote {
         election.questions[i],
         answers[i],
         election.public_key,
-        progress
+        progress,
       );
     }
   }
@@ -65,7 +65,6 @@ class EncryptedVote {
     });
     return overall_result;
   }
-
   toJSONObject(include_plaintext) {
     var answers = _(this.encrypted_answers).map(function (ea, i) {
       return ea.toJSONObject(include_plaintext);
@@ -73,7 +72,7 @@ class EncryptedVote {
 
     return {
       answers: answers,
-      election_uuid: this.election_uuid,
+      short_name: this.short_name,
     };
   }
 
@@ -150,7 +149,7 @@ EncryptedVote.fromJSONObject = function (d, election) {
   });
 
   ev.election_hash = d.election_hash;
-  ev.election_uuid = d.election_uuid;
+  ev.short_name = d.short_name;
 
   return ev;
 };

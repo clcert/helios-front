@@ -53,7 +53,8 @@ function VerifyVoteModal(props) {
           </p>
           <img className="mt-2" src={encryptingGIF} alt="" />
           <p className="subtitle mt-4">
-            Se está verificando que el voto se realizó correctamente
+            Se está verificando que el voto se realizó correctamente.<br/>
+            No cierre esta ventana.
           </p>
         </section>
       </div>

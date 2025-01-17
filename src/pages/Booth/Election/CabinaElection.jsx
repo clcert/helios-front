@@ -94,8 +94,8 @@ function CabinaElection(props) {
   useEffect(() => {
     if (props.electionData.questions) {
       const questionsFetch = props.electionData.questions;
-      questionsFetch.include_blank_null =
-        questionsFetch.include_blank_null === "True" ? true : false;
+      questionsFetch.include_informal_options =
+        questionsFetch.include_informal_options === "True" ? true : false;
       setQuestions(questionsFetch);
       setNameElection(props.electionData.name);
     }
@@ -125,7 +125,7 @@ function CabinaElection(props) {
   const sendVote = () => {
     setModalVerify(true);
     BOOTH_PSIFOS.sendJson(shortName).then((res) => {
-      setVoteHash(res.vote_hash);
+      setVoteHash(res.encrypted_ballot_hash);
 
       // Caso en que el voto no se haya realizado correctamente
       if(res.verified === false){

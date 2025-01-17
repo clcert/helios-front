@@ -1,8 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, createContext } from "react";
 import { Link } from "react-router-dom";
 import { getStats } from "../../../../services/election";
 import Status from "../../AdministrationPanel/component/Status";
 import { electionStatusTranslate } from "../../../../constants";
+import { getTotalVoters } from "../../../../services/voters";
+
+
+export const StateContext = createContext();
 
 function Header({
   electionName,
@@ -58,6 +62,8 @@ function NextSteps({
   tallyModal,
   combineTallyModal,
   uploadModalonClick,
+  totalVoters,
+  totalTrustees,
 }) {
   return (
     <div className="ml-4">
@@ -69,6 +75,8 @@ function NextSteps({
         releaseModal={releaseModal}
         tallyModal={tallyModal}
         combineTallyModal={combineTallyModal}
+        totalVoters={totalVoters}
+        totalTrustees={totalTrustees}
         uploadModalonClick={(value) => {
           uploadModalonClick(value);
         }}
@@ -87,11 +95,18 @@ function CardElection(props) {
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    getStats(props.election.short_name).then((res) => {
-      const { jsonResponse } = res;
-      setTotalVoters(jsonResponse.total_voters);
-      setTotalVotes(jsonResponse.num_casted_votes);
-    });
+    const fetchStats = async () => {
+      try {
+        const statsRes = await getStats(props.election.short_name);
+        const votersRes = await getTotalVoters(props.election.short_name);
+        setTotalVotes(statsRes.jsonResponse.num_casted_votes);
+        setTotalVoters(votersRes.jsonResponse.total_voters);
+      } catch (error) {
+        console.error("Failed to fetch election stats or voters", error);
+      }
+    };
+
+    fetchStats();
   }, [props.election]);
 
   const checkboxHandler = (e) => {
@@ -102,10 +117,10 @@ function CardElection(props) {
   const inputCheck = useCallback(() => {
     if (props.electionSelected.length === 0) return false;
 
-    let status = props.election.election_status;
+    let status = props.election.status;
     const canCombineDecryptions =
-      props.election.election_status === "Decryptions uploaded" ||
-      (props.election.election_status === "Tally computed" &&
+      props.election.status === "Decryptions uploaded" ||
+      (props.election.status === "Tally computed" &&
         props.election.decryptions_uploaded >=
           Math.floor(props.election.total_trustees / 2) + 1);
 
@@ -134,7 +149,7 @@ function CardElection(props) {
       />
       <hr />
       <MainInfo
-        state={electionStatusTranslate[props.election.election_status]}
+        state={electionStatusTranslate[props.election.status]}
         totalVoters={totalVoters}
         totalVotes={totalVotes}
       />
@@ -147,6 +162,8 @@ function CardElection(props) {
         tallyModal={props.tallyModal}
         combineTallyModal={props.combineTallyModal}
         uploadModalonClick={props.uploadModalonClick}
+        totalVoters={totalVoters}
+        totalTrustees={props.totalTrustees}
       />
     </div>
   );

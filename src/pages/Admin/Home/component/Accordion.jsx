@@ -2,28 +2,52 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import bulmaCollapsible from "@creativebulma/bulma-collapsible";
 import "../../../../static/booth/css/booth.scss";
 import { Link } from "react-router-dom";
+import { electionStatus } from "../../../../constants";
 
-function Accordion(props) {
-  let collapsiblesRef = useRef(null);
+
+function Accordion({ election }) {
+  const collapsiblesRef = useRef(null);
   const [show, setShow] = useState(false);
   const [stateElection, setStateElection] = useState("");
 
-  const state = useCallback(() => {
-    if (props.election.election_status === "Setting up") {
-      setStateElection("En configuración");
-    } else if (props.election.election_status === "Started") {
-      setStateElection("En curso");
-    } else {
-      setStateElection("Finalizada");
-    }
-  }, [props.election.election_status]);
+  const determineState = useCallback(() => {
+    const statusMap = {
+      [electionStatus.settingUp]: "En configuración",
+      [electionStatus.readyForKeyGeneration]: "Generación de claves",
+      [electionStatus.readyForOpening]: "Apertura de elección",
+      "Started": "En curso",
+    };
+    setStateElection(statusMap[election.status] || "Finalizada");
+  }, [election.status]);
 
   useEffect(() => {
     bulmaCollapsible.attach(".is-collapsible", {
       container: collapsiblesRef.current,
     });
-    state();
-  }, [state]);
+    determineState();
+  }, [determineState]);
+
+  const links = [
+    { path: "panel", label: "Configuraciones" },
+    { path: "resumen", label: "Resumen" },
+    { path: "voters-list", label: "Padrón" },
+    { path: "trustee", label: "Custodios" },
+    { path: "resultado", label: "Resultados" },
+    { path: "statistics", label: "Estadísticas" },
+  ];
+
+  const renderLinks = (start, end) => {
+    return links.slice(start, end).map((link) => (
+      <div key={link.path} className="row-accordion is-full">
+        <Link
+          to={`/psifos/admin/${election.short_name}/${link.path}`}
+          className="accordion-link"
+        >
+          {link.label}
+        </Link>
+      </div>
+    ));
+  };
 
   return (
     <div ref={collapsiblesRef} id="accordion_first">
@@ -38,7 +62,7 @@ function Accordion(props) {
         >
           <header className="card-header accordion-header p-2">
             <p className="card-header-title accordion-title mb-0">
-              {props.election.short_name}
+              {election.short_name}
             </p>
             <span className="accordion-state">{stateElection}</span>
 
@@ -55,86 +79,8 @@ function Accordion(props) {
           >
             <div className="card-content accordion-content pl-4">
               <div className="columns pl-3 pr-3">
-                <div className="rows column">
-                  <div className="row-accordion is-full">
-                    {" "}
-                    <Link
-                      to={
-                        "/psifos/admin/" + props.election.short_name + "/panel"
-                      }
-                      className="accordion-link"
-                    >
-                      Configuraciones
-                    </Link>{" "}
-                  </div>
-                  <div className="row-accordion is-full">
-                    {" "}
-                    <Link
-                      to={
-                        "/psifos/admin/" +
-                        props.election.short_name +
-                        "/resumen"
-                      }
-                      className="accordion-link"
-                    >
-                      Resumen
-                    </Link>{" "}
-                  </div>
-                  <div className="row-accordion is-full">
-                    {" "}
-                    <Link
-                      to={
-                        "/psifos/admin/" +
-                        props.election.short_name +
-                        "/voters-list"
-                      }
-                      className="accordion-link"
-                    >
-                      Padrón
-                    </Link>{" "}
-                  </div>
-                </div>
-                <div className="rows column">
-                  <div className="row-accordion is-full">
-                    {" "}
-                    <Link
-                      to={
-                        "/psifos/admin/" +
-                        props.election.short_name +
-                        "/trustee"
-                      }
-                      className="accordion-link"
-                    >
-                      Custodios
-                    </Link>{" "}
-                  </div>
-                  <div className="row-accordion is-full">
-                    {" "}
-                    <Link
-                      to={
-                        "/psifos/admin/" +
-                        props.election.short_name +
-                        "/resultado"
-                      }
-                      className="accordion-link"
-                    >
-                      Resultados
-                    </Link>{" "}
-                  </div>
-                  <div className="row-accordion is-full">
-                    {" "}
-                    <Link
-                      to={
-                        "/psifos/admin/" +
-                        props.election.short_name +
-                        "/statistics"
-                      }
-                      className="accordion-link"
-                    >
-                      Estadísticas
-                    </Link>{" "}
-                  </div>
-                </div>
+                <div className="rows column">{renderLinks(0, 3)}</div>
+                <div className="rows column">{renderLinks(3, 6)}</div>
               </div>
             </div>
           </div>
@@ -145,4 +91,5 @@ function Accordion(props) {
     </div>
   );
 }
+
 export default Accordion;

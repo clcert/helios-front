@@ -1,4 +1,4 @@
-import { backendOpIP } from "../server";
+import { backendInfoIp, backendOpIP } from "../server";
 
 async function getTrustee(uuidTrustee) {
   /**
@@ -34,8 +34,8 @@ async function getTrustees(shortName) {
   return { resp: resp, jsonResponse: jsonResponse };
 }
 
-async function getTrusteeHome(shortName, uuidTrustee) {
-  const url = backendOpIP + "/" + shortName + "/trustee/" + uuidTrustee + "/home";
+async function getTrusteePanel() {
+  const url = backendOpIP + "/trustee/panel";
   const resp = await fetch(url, {
     method: "GET",
     credentials: "include",
@@ -44,4 +44,48 @@ async function getTrusteeHome(shortName, uuidTrustee) {
   return { resp: resp, jsonResponse: jsonResponse };
 }
 
-export { getTrustee, getTrustees, getTrusteeHome };
+async function getTrusteeCrypto(shortName) {
+  const url = backendOpIP + "/" + shortName + "/trustee/crypto";
+  const resp = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+  });
+  const jsonResponse = await resp.json();
+  return { resp: resp, jsonResponse: jsonResponse };
+}
+
+async function getDecryption(shortName, trusteUuid) {
+  const url = backendOpIP + "/" + shortName + "/trustee/" + trusteUuid + "/get-decryptions";
+  const token = localStorage.getItem("token");
+  const resp = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  });
+  const jsonResponse = await resp.json();
+  return { resp: resp, jsonResponse: jsonResponse };
+}
+
+async function getTotalTrustees(shortName) {
+  const url = backendInfoIp + "/" + shortName + "/total-trustees";
+  const resp = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+  });
+  const jsonResponse = await resp.json();
+  return { resp: resp, jsonResponse: jsonResponse };
+}
+
+async function electionHasTrustees(shortName) {
+  const url = backendInfoIp + "/" + shortName + "/election-has-trustees";
+  const resp = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+  });
+  const jsonResponse = await resp.json();
+  return { resp: resp, jsonResponse: jsonResponse };
+}
+
+export { getTrustee, getTrustees, getTrusteePanel, getTrusteeCrypto, getDecryption, getTotalTrustees, electionHasTrustees };

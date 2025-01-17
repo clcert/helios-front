@@ -49,7 +49,7 @@ function CreateCustodio() {
       },
       body: JSON.stringify({
         name: name,
-        trustee_login_id: login_id,
+        username: login_id,
         email: email,
       }),
     });

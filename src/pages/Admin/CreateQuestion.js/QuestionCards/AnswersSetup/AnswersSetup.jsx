@@ -36,11 +36,11 @@ export default function AnswersSetup({
   answersWithKey,
 }) {
   const {
-    closed_options, q_type,
+    formal_options, type,
   } = question
 
   function downloadFile() {
-    const textToSave = generateClosedOptionsString(closed_options);
+    const textToSave = generateClosedOptionsString(formal_options);
     let hiddenElement = document.createElement("a");
     hiddenElement.download = `answers.txt`;
     const blob = new Blob([textToSave], {
@@ -60,10 +60,7 @@ export default function AnswersSetup({
       });
       let auxQuestion = question;
       const validAns = Array.from(new Set(newAns))
-      auxQuestion.closed_options = generateClosedOptions(
-        question.include_blank_null,
-        validAns
-      );
+      auxQuestion.formal_options = validAns;
       auxQuestion.options_specifications = Array(validAns.length).fill("")
       updateQuestion(questionId, auxQuestion);
     };
@@ -72,7 +69,7 @@ export default function AnswersSetup({
 
   return (
     <>
-      {isSTVQuestion(q_type) && (
+      {isSTVQuestion(type) && (
         <STVAnswersSetup
           answersWithKey={answersWithKey}
           disabledEdit={disabledEdit}
@@ -88,7 +85,7 @@ export default function AnswersSetup({
         />
       )}
       
-      {isClosedQuestion(q_type) && (
+      {isClosedQuestion(type) && (
         <ClosedAnswersSetup
           answersWithKey={answersWithKey}
           disabledEdit={disabledEdit}
@@ -99,11 +96,11 @@ export default function AnswersSetup({
         />
       )}
 
-      {isMixNetQuestion(q_type) && (
+      {isMixNetQuestion(type) && (
         <MixnetAnswersSetup
           disabledEdit={disabledEdit}
           handleFileChange={filesToString}
-          closedOptions={closed_options}
+          closedOptions={formal_options}
           handleDownloadFile={downloadFile}
           q_num={questionId}
         />

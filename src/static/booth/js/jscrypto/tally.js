@@ -180,7 +180,7 @@ Tally.fromJSONObject = function (json_tallies, public_key) {
     json_tallies.num_tallied,
     json_tallies.public_key,
     json_tallies.question,
-    json_tallies.tally
+    json_tallies.encrypted_tally
   );
 };
 

@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 function InputCheckbox(props) {
   let answers = useSelector((state) => state.booth.answers)[props.index];
   answers = answers ? answers : [];
-  const includeBlankNull = props.question.include_blank_null;
-  const excludeGroups = props.question.excluding_groups;
+  const includeBlankNull = props.question.include_informal_options;
+  const excludeGroups = props.question.excluded_options;
 
   const getGroup = (ans) => {
     const regex = /\((.*?)\)/;
@@ -12,7 +12,7 @@ function InputCheckbox(props) {
     return group ? group[1] : null;
   };
 
-  const closed_options = props.question.closed_options_list;
+  const formal_options = props.question.formal_options;
 
   const disabledCondition = (index) => {
     return (
@@ -25,11 +25,11 @@ function InputCheckbox(props) {
     let value = parseInt(event.target.value);
     let answersAux = [...answers];
 
-    const questionsLength = closed_options.length;
+    const questionsLength = formal_options.length;
     if (
       includeBlankNull &&
-      (answersAux.includes(questionsLength - 2) ||
-        answersAux.includes(questionsLength - 1))
+      (answersAux.includes(questionsLength) ||
+        answersAux.includes(questionsLength + 1))
     ) {
       answersAux = [];
     }
@@ -44,15 +44,15 @@ function InputCheckbox(props) {
   const excludeGroupsDisabled = (value) => {
     const group = getGroup(value);
     return answers.some((ans) => {
-      return getGroup(props.question.closed_options_list[ans]) === group;
+      return getGroup(props.question.formal_options[ans]) === group;
     });
   };
   return (
     <div>
-      {closed_options.map((key, index) => {
+      {formal_options.map((key, index) => {
         if (
           !includeBlankNull ||
-          index < props.question.closed_options_list.length - 2
+          index < props.question.formal_options.length
         ) {
           const isDisabled = disabledCondition(index);
           return (

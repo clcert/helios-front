@@ -17,7 +17,7 @@ export default function Participation({ shortName, election }) {
   }, [initComponent]);
 
   const showNotAvailableMessage = election && isSettingUpElection(
-    election.election_status
+    election.status
   )
   const isLoadData = (
     totalVoters !== undefined && totalVotes !== undefined

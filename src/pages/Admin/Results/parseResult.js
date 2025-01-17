@@ -12,7 +12,7 @@ const parseClosedResult = (question, votesPerAns, includeWhiteNull) => {
     const nValidVotes = votesPerAns.reduce((n, a) => n + parseInt(a), 0);
     const nCastVotes = noNullWhiteAns.reduce((n, a) => n + parseInt(a), 0);
     let result = [];
-    question.closed_options_list.forEach((answer, index) => {
+    question.formal_options.forEach((answer, index) => {
         const obj = {
         Respuesta: answer,
         Votos: parseInt(votesPerAns[index]),
@@ -37,7 +37,7 @@ const parseClosedResult = (question, votesPerAns, includeWhiteNull) => {
 };
 
 const parseRankingResult = (question, result) => {
-    const options_list = question['closed_options_list']
+    const options_list = question['formal_options']
     const fixedJsonString = result
     .replace(/'/g, '"')
     .replace(/None/g, 'null')

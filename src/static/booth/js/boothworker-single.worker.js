@@ -112,6 +112,7 @@ function do_encrypt(message) {
     message.answer,
     ELECTION.public_key
   );
+  data.short_name = ELECTION.questions[message.q_num].short_name;
   data.encrypted_answer = encrypted_answer.toJSONObject(true);
   const excluding_groups =
     ELECTION.questions[message.q_num].excluding_groups === "True";
@@ -123,6 +124,7 @@ function do_encrypt(message) {
       encrypted_answer.randomness
     );
     data.excluded_proofs = excludedProofs;
+    
   }
 
   let encrypted_open_answer = null;
