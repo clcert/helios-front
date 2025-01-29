@@ -2,14 +2,8 @@ export default function DropFile(props) {
   const checkFile = (text) => {
     try {
       const content = JSON.parse(text);
-      if (
-        content.hasOwnProperty("trustee") &&
-        content.hasOwnProperty("private_key")
-      ) {
-        return content.private_key;
-      } else {
-        return "";
-      }
+      return content;
+      
     } catch (err) {
       return "";
     }
@@ -46,7 +40,7 @@ export default function DropFile(props) {
         onClick={buttonUpload}
       >
         <div className="d-flex justify-content-center p-1">
-          <span className="has-text-white">
+          <span>
             Arrastre o haga click aquí para subir el archivo
           </span>
         </div>

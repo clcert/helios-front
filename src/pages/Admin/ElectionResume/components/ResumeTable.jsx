@@ -84,11 +84,11 @@ export default function ResumeTable({ grouped = false, group = "" }) {
   const contentPerRowTimes = [
     {
       header: "Hora de Apertura",
-      value: new Date(startTime).toLocaleDateString("es-CL", options),
+      value: startTime ? new Date(startTime).toLocaleDateString("es-CL", options) : "Elección no ha comenzado",
     },
     {
       header: "Hora de Cierre",
-      value: new Date(closeTime).toLocaleDateString("es-CL", options),
+      value: closeTime ? new Date(closeTime).toLocaleDateString("es-CL", options) : "Elección no ha cerrado",
     },
   ];
 

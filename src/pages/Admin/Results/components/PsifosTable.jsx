@@ -44,7 +44,6 @@ function PsifosTable({ data, election }) {
   useEffect(() => {
     setTableData(data);
   }, [data])
-
   return (
     <table className="pretty table is-hoverable voters-table">
       <thead>
@@ -72,7 +71,7 @@ function PsifosTable({ data, election }) {
               {dataKeys.map((row, indexRow) => (
                 <StyledCell
                   column={`column${indexRow}`}
-                  content={election.normalization && indexRow === 1
+                  content={election.normalized && indexRow === 1
                     ? parseFloat((fila[row] / election.max_weight)).toString().replace(".", ",")
                     : (indexRow === 2 ? fila[row].replace(".", ",") : fila[row])}
                 />

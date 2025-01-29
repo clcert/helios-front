@@ -84,7 +84,7 @@ function ElectionList({
       <CardElection
         key={index}
         election={election}
-        electionStatus={election.election_status}
+        electionStatus={election.status}
         electionSelected={electionSelected}
         handlerElectionSelected={electionSelectedHandler(election)}
         freezeModal={() => freezeModalHandler(modalParams)}
@@ -207,7 +207,7 @@ function GeneralAdmin() {
     let auxElections = elections;
     for (let i = 0; i < auxElections.length; i++) {
       if (auxElections[i].short_name === shortName) {
-        auxElections[i].election_status = status;
+        auxElections[i].status = status;
       }
     }
     setElections(auxElections);
@@ -236,8 +236,8 @@ function GeneralAdmin() {
    */
   const canCombineDecryptions = (election) => {
     return (
-      election.election_status === "Decryptions uploaded" ||
-      (election.election_status === "Tally computed" &&
+      election.status === "Decryptions uploaded" ||
+      (election.status === "Tally computed" &&
         election.decryptions_uploaded >=
           Math.floor(election.total_trustees / 2) + 1)
     );
@@ -246,7 +246,7 @@ function GeneralAdmin() {
   const setElectionData = useCallback(() => {
     const auxJson = {};
     elections.forEach((election) => {
-      let status = election.election_status;
+      let status = election.status;
       if (canCombineDecryptions(election)) {
         status = "Can combine decryptions";
       }
@@ -285,7 +285,7 @@ function GeneralAdmin() {
    */
 
   const handlerElectionSelected = (election, checked) => {
-    let status = election.election_status;
+    let status = election.status;
 
     if (canCombineDecryptions(election)) {
       status = "Can combine decryptions";

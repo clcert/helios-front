@@ -11,11 +11,11 @@ return (
                 key={index}
                 election={election}
                 disabledEdit={disabledEdit}
-                questionId={item.q_num}
+                questionId={item.index}
                 question={item}
                 updateQuestion={updateQuestion}
                 remove={() => {
-                    removeQuestion(item.q_num);
+                    removeQuestion(item.index);
                 }}
                 checkOptions={handleOptionsChecked}
             />

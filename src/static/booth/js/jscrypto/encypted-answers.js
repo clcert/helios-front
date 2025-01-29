@@ -99,7 +99,7 @@ class EncryptedAnswer {
     // keep track of number of options selected.
     var num_selected_answers = 0;
     // go through each possible answer and encrypt either a g^0 or a g^1.
-    for (var i = 0; i < question.closed_options_list.length; i++) {
+    for (var i = 0; i < question.total_options; i++) {
       var plaintext_index;
       // if this is the answer, swap them so m is encryption 1 (g)
       if (_.includes(answer, i)) {
@@ -142,7 +142,7 @@ class EncryptedAnswer {
       // compute the homomorphic sum of all the options
       var hom_sum = choices[0];
       var rand_sum = randomness[0];
-      for (var j = 1; j < question.closed_options_list.length; j++) {
+      for (var j = 1; j < question.total_options; j++) {
         hom_sum = hom_sum.multiply(choices[j]);
         rand_sum = rand_sum.add(randomness[j]).mod(pk.q);
       }

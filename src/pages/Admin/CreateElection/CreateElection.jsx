@@ -26,15 +26,14 @@ function CreateElection(props) {
   /** @state {string} short name for election */
   const [electionParams, setElectionParams] = useState({
     short_name: "",
-    name: "",
+    long_name: "",
     description: "",
-    election_type: "election",
+    type: "election",
     max_weight: 1,
-    obscure_voter_names: false,
-    randomize_answer_order: false,
-    election_login_type: "close_p",
-    normalization: false,
-    grouped: false,
+    randomized_options: false,
+    voters_login_type: "close_p",
+    normalized: false,
+    grouped_voters: false,
   });
 
   /** @state {string} alert message  */
@@ -46,7 +45,7 @@ function CreateElection(props) {
   const { shortName } = useParams();
 
   const initComponent = useCallback((election) => {
-    setDisabledEdit(election.election_status !== "Setting up");
+    setDisabledEdit(election.status !== "Setting up");
     const electionType = {
       Open: "open_p",
       Close: "close_p",
@@ -54,15 +53,14 @@ function CreateElection(props) {
     };
     const params = {
       short_name: election.short_name,
-      name: election.name,
+      long_name: election.long_name,
       description: election.description,
-      election_type: election.election_type.toLocaleLowerCase(),
+      type: election.type.toLocaleLowerCase(),
       max_weight: election.max_weight,
-      obscure_voter_names: election.obscure_voter_names,
-      randomize_answer_order: election.randomize_answer_order,
-      election_login_type: electionType[election.election_login_type],
-      normalization: election.normalization,
-      grouped: election.grouped,
+      randomized_options: election.randomized_options,
+      voters_login_type: electionType[election.voters_login_type],
+      normalized: election.normalized,
+      grouped_voters: election.grouped_voters,
     };
     setElectionParams(params);
   }, []);
@@ -140,8 +138,8 @@ function CreateElection(props) {
       );
       return false;
     } else if (
-      electionParams.name.length === 0 ||
-      electionParams.name.length > 250
+      electionParams.long_name.length === 0 ||
+      electionParams.long_name.length > 250
     ) {
       setAlertMessage(
         "El nombre de la elección debe tener entre 1 y 250 caracteres"
@@ -215,11 +213,11 @@ function CreateElection(props) {
                 className="input"
                 type="text"
                 placeholder="Nombre de la elección"
-                value={electionParams.name}
+                value={electionParams.long_name}
                 onChange={(e) => {
                   setElectionParams({
                     ...electionParams,
-                    name: e.target.value,
+                    long_name: e.target.value,
                   });
                 }}
               />
@@ -255,11 +253,11 @@ function CreateElection(props) {
               <div className="select">
                 <select
                   disabled={disabledEdit}
-                  value={electionParams.election_type}
+                  value={electionParams.type}
                   onChange={(e) => {
                     setElectionParams({
                       ...electionParams,
-                      election_type: e.target.value,
+                      type: e.target.value,
                     });
                   }}
                 >
@@ -276,11 +274,11 @@ function CreateElection(props) {
             <div className="select">
               <select
                 disabled={disabledEdit}
-                value={electionParams.election_login_type}
+                value={electionParams.voters_login_type}
                 onChange={(e) => {
                   setElectionParams({
                     ...electionParams,
-                    election_login_type: e.target.value,
+                    voters_login_type: e.target.value,
                   });
                 }}
               >
@@ -325,34 +323,10 @@ function CreateElection(props) {
                   onChange={(e) => {
                     setElectionParams({
                       ...electionParams,
-                      obscure_voter_names: e.target.checked,
+                      randomized_options: e.target.checked,
                     });
                   }}
-                  checked={electionParams.obscure_voter_names}
-                  type="checkbox"
-                  className="mr-2"
-                />
-                Esconder nombres de los votantes
-              </label>
-            </div>
-            <p className="help">
-              {
-                "Actívelo si desea que la identidad de los votantes sea remplazada por alias en el centro de rastreo de papeletas (e.g. V12)."
-              }
-            </p>
-          </div>
-          <div className="field">
-            <div className="control">
-              <label className="checkbox">
-                <input
-                  disabled={disabledEdit}
-                  onChange={(e) => {
-                    setElectionParams({
-                      ...electionParams,
-                      randomize_answer_order: e.target.checked,
-                    });
-                  }}
-                  checked={electionParams.randomize_answer_order}
+                  checked={electionParams.randomized_options}
                   type="checkbox"
                   className="mr-2"
                 />
@@ -371,10 +345,10 @@ function CreateElection(props) {
                   onChange={(e) => {
                     setElectionParams({
                       ...electionParams,
-                      normalization: e.target.checked,
+                      normalized: e.target.checked,
                     });
                   }}
-                  checked={electionParams.normalization}
+                  checked={electionParams.normalized}
                   type="checkbox"
                   className="mr-2"
                 />
@@ -393,10 +367,10 @@ function CreateElection(props) {
                   onChange={(e) => {
                     setElectionParams({
                       ...electionParams,
-                      grouped: e.target.checked,
+                      grouped_voters: e.target.checked,
                     });
                   }}
-                  checked={electionParams.grouped}
+                  checked={electionParams.grouped_voters}
                   type="checkbox"
                   className="mr-2"
                 />

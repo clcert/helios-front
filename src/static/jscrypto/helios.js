@@ -537,6 +537,7 @@ HELIOS.EncryptedVote.fromJSONObject = function(d, election) {
   
   ev.election_hash = d.election_hash;
   ev.election_uuid = d.election_uuid;
+  ev.short_name = d.short_name;
   
   return ev;
 };

@@ -16,9 +16,9 @@ async function getEgParams(uuid) {
   return jsonResponse["mixnet_params"];
 }
 
-async function getCheckSk(uuid, uuidTrustee) {
+async function getCheckSk(uuid) {
   const url =
-    backendOpIP + "/" + uuid + "/trustee/" + uuidTrustee + "/check-sk";
+    backendOpIP + "/" + uuid + "/trustee/check-sk";
   const response = await fetch(url, {
     method: "GET",
     credentials: "include",

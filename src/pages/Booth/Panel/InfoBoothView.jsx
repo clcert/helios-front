@@ -23,7 +23,7 @@ function InfoBoothView() {
     getElectionPublic(shortName).then((data) => {
       const { jsonResponse } = data;
       setElection(jsonResponse);
-      setActiveNumber(jsonResponse.election_status.includes("released") ? 3 : 0);
+      setActiveNumber(jsonResponse.status.includes("released") ? 3 : 0);
     });
   }, [shortName]);
 

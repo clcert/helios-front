@@ -17,7 +17,7 @@ export default function VotesByTime({shortName, election}) {
         initComponent();
     }, [initComponent]);
 
-    const isSettingUp = election && isSettingUpElection(election.election_status)
+    const isSettingUp = election && isSettingUpElection(election.status)
     return (
         <ShowStatistics
             notAvailableMessage="La elección aun no comienza"

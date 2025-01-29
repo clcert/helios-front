@@ -8,10 +8,10 @@ function urlifyDescription(text) {
   })
 }
 
-function Description ({q_description}) {
-  const description_with_url = urlifyDescription(q_description)
+function Description ({description}) {
+  const description_with_url = urlifyDescription(description)
   return (
-    q_description && (
+    description && (
       <p
         dangerouslySetInnerHTML={{ __html: description_with_url }}
         className="subtitle is-italic"
@@ -42,9 +42,9 @@ function Title({title}) {
 }
 
 function Restriction ({
-  min_answers, max_answers, q_type,
+  min_answers, max_answers, type,
 }) {
-  const init = isSTVQuestion(q_type) ? "ordenar" : undefined
+  const init = isSTVQuestion(type) ? "ordenar" : undefined
   const restriction = answersRestrictionText(
     min_answers, max_answers, init
   )
@@ -60,8 +60,8 @@ function QuestionHeader({
 }) {
   const {
     min_answers, max_answers,
-    q_description, q_text,
-    q_type,
+    description, title,
+    type,
   } = questions
 
   return (
@@ -71,15 +71,15 @@ function QuestionHeader({
         totalQuestions={totalQuestions}
       />
       <Title
-        title={q_text}
+        title={title}
       />
       <Restriction
         min_answers={min_answers}
         max_answers={max_answers}
-        q_type={q_type}
+        type={type}
       />
       <Description
-        q_description={q_description}
+        description={description}
       />
     </div>
   );

@@ -4,7 +4,7 @@ import { backendOpIP } from "../../../../server";
 
 function EditVoterModal(props) {
   const initialStateVoter = {
-    login: "",
+    username: "",
     weight: "",
   };
 
@@ -28,14 +28,19 @@ function EditVoterModal(props) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          voter_login_id: infoVoter.login,
-          voter_weight: infoVoter.weight,
+          username: infoVoter.username,
+          old_username: infoVoter.old_username,
+          weight_init: infoVoter.weight,
         }),
       }
     );
     if (resp.status === 200) {
+      const user = await resp.json();
       setTypeAlert("is-success");
       setFeedbackMessage("Votante editado con exito!");
+      setInfoVoter({
+        old_username: user.username,
+      })
     } else {
       setTypeAlert("is-danger");
       setFeedbackMessage("Ha ocurrido un error");
@@ -45,8 +50,9 @@ function EditVoterModal(props) {
   useEffect(() => {
     setInfoVoter({
       ...infoVoter,
-      login: props.voter.voter_login_id,
-      weight: props.voter.voter_weight,
+      username: props.voter.username,
+      old_username: props.voter.username,
+      weight: props.voter.weight_init,
     });
   }, [props.voter]);
 
@@ -77,13 +83,13 @@ function EditVoterModal(props) {
               </div>
             )}
             <div className="field mb-1">
-              <label className="label">Login del votante</label>
+              <label className="label">Nombre de dusuario del votante</label>
               <div className="control">
                 <input
                   className="input mr-2"
-                  name="login"
+                  name="username"
                   type="text"
-                  value={infoVoter.login}
+                  value={infoVoter.username}
                   onChange={handleChange}
                 ></input>
               </div>
@@ -112,7 +118,7 @@ function EditVoterModal(props) {
                 setFeedbackMessage("");
                 props.setVoterSelect((prevState) => ({
                   ...prevState,
-                  voter_name: "",
+                  name: "",
                 }));
                 props.onHide();
               }}

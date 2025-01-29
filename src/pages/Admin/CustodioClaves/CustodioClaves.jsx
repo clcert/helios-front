@@ -91,7 +91,7 @@ function CustodioClaves(props) {
               </div>
             </div>
           </div>
-          {election.election_status === "Setting up" && (
+          {election.status === "Setting up" && (
             <>
               <div className="d-flex justify-center flex-column">
                 <div>
@@ -126,7 +126,7 @@ function CustodioClaves(props) {
             <div>
               <span>Link de conexión custodio: </span>
               <CopyToClipboard
-                text={backendOpIP + "/" + shortName + "/trustee/login"}
+                text={backendOpIP + "/trustee/login/panel"}
                 onCopy={() => setShowCopyMessage(true)}
               >
                 <span>
@@ -144,7 +144,7 @@ function CustodioClaves(props) {
                 className="link-without-line font-caption"
                 onClick={() => {
                   window.open(
-                    backendOpIP + "/" + shortName + "/trustee/login",
+                    backendOpIP + "/trustee/login/panel",
                     "_blank"
                   );
                 }}

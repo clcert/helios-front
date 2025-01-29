@@ -5,6 +5,7 @@ import CabinaElection from "./Election/CabinaElection";
 import Consult from "./Consult/Consult";
 import NoAuth from "./NoAuth";
 import LoadPage from "../../component/Loading/LoadPage";
+import { getElection, getQuestions } from "../../services/election";
 
 function Booth(props) {
   /** View for booth */
@@ -45,23 +46,19 @@ function Booth(props) {
        * check if voter can vote in election
        */
 
-      const url = backendOpIP + "/get-election/" + shortName;
-      const token = localStorage.getItem("token");
-      const resp = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      });
+      const questions = await getQuestions(shortName);
+      const election = await getElection(shortName);
 
-      const jsonResponse = await resp.json();
+      let jsonResponse = {
+        election: election.jsonResponse,
+        questions: questions.jsonResponse.questions,
+      };
+
       setLoad(true);
-      if (resp.status === 200) {
-        setElectionData(jsonResponse);
-        setType(jsonResponse.election_type);
-        setAuth(true);
-      }
+      setElectionData(jsonResponse);
+      setType(jsonResponse.election.election_type);
+      setAuth(true);
+
     }
 
     async function getElectionQuestions() {
@@ -86,7 +83,7 @@ function Booth(props) {
 
         if (resp.status === 200) {
           setElectionData(jsonResponse);
-          setType(jsonResponse.election_type);
+          setType(jsonResponse.election.election_type);
           setAuth(true);
         } else {
           const message =

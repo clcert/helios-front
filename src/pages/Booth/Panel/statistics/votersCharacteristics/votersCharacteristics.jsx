@@ -3,7 +3,7 @@ import ShowStatistics from "../components/showStatistics"
 import VotersCharacteristicsStats from "./votersCharacteristicsStats"
 
 export default function VotersCharacteristics({ election }) {
-  const status = election && election.election_status
+  const status = election && election.status
   const settingUp = status && isSettingUpElection(status)
   const started = status && isStartedElection(status)
   return(

@@ -116,7 +116,7 @@ class BoothPsifos {
     // async?
     this.setup_workers(raw_json);
 
-    document.title = "Participa UChile - " + this.election.name;
+    document.title = "Participa UChile - " + this.election.short_name;
 
     // escape election fields
     // let escaped_array = ["description", "name"]
@@ -132,7 +132,7 @@ class BoothPsifos {
     this.election.question_answer_orderings = [];
     this.election.questions.forEach(
       function (question, i) {
-        var ordering = new Array(question.closed_options_list.length);
+        var ordering = new Array(question.formal_options.length);
 
         // initialize array so it is the identity permutation
         ordering.forEach(function (answer, j) {
@@ -163,7 +163,7 @@ class BoothPsifos {
     this.worker.postMessage({
       type: "encrypt",
       q_num: question_num,
-      q_type: this.election.questions[question_num].q_type,
+      q_type: this.election.questions[question_num].type,
       answer: this.ballot.answers[question_num],
       open_answer: this.ballot.open_answers[question_num],
       id: this.answer_timestamps[question_num],
@@ -234,7 +234,6 @@ class BoothPsifos {
     }.bind(this);
     window.setTimeout(do_hash, 0);
   }
-
   percentageDone = 0;
   total_cycles_waited = 0;
 

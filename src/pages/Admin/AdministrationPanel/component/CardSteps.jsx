@@ -3,6 +3,9 @@ import Status from "./Status";
 function CardSteps({
   election,
   electionStep,
+  generationReadyModal,
+  openingReadyModal,
+  backToSettingModal,
   freezeModal,
   closeModal,
   tallyModal,
@@ -20,6 +23,9 @@ function CardSteps({
         election={election}
         electionStep={electionStep}
         freezeModal={freezeModal}
+        generationReadyModal={generationReadyModal}
+        openingReadyModal={openingReadyModal}
+        backToSettingModal={backToSettingModal}
         closeModal={closeModal}
         tallyModal={tallyModal}
         combineTallyModal={combineTallyModal}

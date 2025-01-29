@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getElection } from "../../../services/election";
+import { getElection, getQuestions } from "../../../services/election";
 import { useDispatch, useSelector } from "react-redux";
 import { setElection } from "../../../store/slices/electionSlice";
 import { electionStatus } from "../../../constants";
@@ -21,9 +21,10 @@ const checkQuestionList = (questionList, optionsChecked) => {
   let isValid = true;
   questionList.forEach((q) => {
     let nSpecifications = q.options_specifications.length
-    let nFormalOptions = q.total_closed_options
-    nFormalOptions = q.include_blank_null && nFormalOptions - 2
-    if (!q.q_text || nFormalOptions !== nSpecifications) {
+    let nFormalOptions = q.formal_options.length
+    
+    nFormalOptions = q.include_informal_options && nFormalOptions
+    if (!q.title || nFormalOptions !== nSpecifications) {
       isValid = false;
     }
   });
@@ -51,24 +52,26 @@ export default function ViewQuestions(props) {
   /** @urlParam {string} shortName of election */
   const { shortName } = useParams();
 
-  const initComponent = useCallback((election) => {
-    election.questions !== null && setQuestionList(
+  const initComponent = useCallback((election, election_questions) => {
+    election_questions && setQuestionList(
       parseSavedQuestionList(
-        election.questions
+        election_questions
       )
     )
-    setDisabledEdit(election.election_status !== electionStatus.settingUp);
+    setDisabledEdit(election.status !== electionStatus.settingUp);
   }, []);
 
   useEffect(() => {
-    if (Object.keys(election).length === 0) {
-      getElection(shortName).then((resp) => {
-        dispatch(setElection(resp.jsonResponse));
-        initComponent(resp.jsonResponse);
-      });
-    } else {
-      initComponent(election);
-    }
+    const fetchQuestionsAndElection = async () => {
+      try {
+        const questionsResp = await getQuestions(shortName);
+        initComponent(election, questionsResp.jsonResponse.questions);
+      } catch (error) {
+        console.error("Error fetching questions or election:", error);
+      }
+    };
+
+    fetchQuestionsAndElection();
   }, [shortName, dispatch, election, initComponent]);
 
   function addQuestion() {
@@ -89,7 +92,7 @@ export default function ViewQuestions(props) {
      */
     let newQuestionList = [];
     for (let i = 0; i < questionList.length; i++) {
-      if (questionList[i].key !== key) {
+      if (questionList[i].index !== key) {
         newQuestionList.push(questionList[i]);
       }
     }
@@ -97,14 +100,9 @@ export default function ViewQuestions(props) {
   }
 
   function updateQuestion(key, newValue) {
-    const nClosedOptions = newValue.closed_options.length
-    const includeInformal = newValue.include_blank_null
-    newValue.total_closed_options = nClosedOptions;
-    newValue.total_options = includeInformal ? nClosedOptions - 2 : nClosedOptions;
-    
     let auxQuestionList = [...questionList];
     for (let i = 0; i < auxQuestionList.length; i++) {
-      if (auxQuestionList[i].q_num === key) {
+      if (auxQuestionList[i].index === key) {
         auxQuestionList[i] = newValue;
       }
       setQuestionList(auxQuestionList);

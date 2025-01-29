@@ -1,46 +1,33 @@
-import { useCallback, useState } from "react";
-import { useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getTrustees } from "../../../../services/trustee";
 import InfoTrustee from "./InfoTrustee";
 import { electionStatus } from "../../../../constants";
 
-function TrusteesList(props) {
-  /** @state {array} trustees list */
+function TrusteesList({ election, deleteTrustee }) {
   const [trustees, setTrustees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
   const { shortName } = useParams();
 
-  const initComponent = useCallback(() => {
-    getTrustees(shortName).then((trustees) => {
-      setIsLoading(false);
-      setTrustees(trustees.jsonResponse);
-    });
+  const fetchTrustees = useCallback(async () => {
+    const response = await getTrustees(shortName);
+    setTrustees(response.jsonResponse);
+    setIsLoading(false);
   }, [shortName]);
 
   useEffect(() => {
-    initComponent();
-  }, [initComponent]);
+    fetchTrustees();
+  }, [fetchTrustees]);
 
-  useEffect(
-    function effectFunction() {
-      let interval = setInterval(() => {
-        getTrustees(shortName).then((trustees) => {
-          setTrustees(trustees.jsonResponse);
-        });
-      }, 5000);
-      return () => {
-        clearInterval(interval);
-      };
-    },
-    [trustees, shortName]
-  );
+  useEffect(() => {
+    const interval = setInterval(fetchTrustees, 5000);
+    return () => clearInterval(interval);
+  }, [fetchTrustees]);
 
   if (isLoading) {
     return (
-      <div className="d-flex justify-content-center pt-4">
-        <div className="spinner-animation-white"></div>
+      <div className="d-flex justify-content-center">
+        <div className="spinner-animation" />
       </div>
     );
   }
@@ -52,56 +39,51 @@ function TrusteesList(props) {
           Lista de custodios
         </div>
       )}
-      {trustees.map((t, index) => {
-        return (
-          <div className="box border-style-box" key={t.name}>
-            <div className="level mb-0">
-              <span className="has-text-weight-bold is-size-4 level-item">
-                Custodio de Clave #{index + 1}
+      {trustees.map((trustee, index) => (
+        <div className="box border-style-box" key={trustee.name}>
+          <div className="level mb-0">
+            <span className="has-text-weight-bold is-size-4 level-item">
+              Custodio de Clave #{index + 1}
+            </span>
+            {election.status === "Setting up" && (
+              <span className="level-right">
+                <i
+                  className="close-question fa-solid fa-trash"
+                  onClick={() => deleteTrustee(trustee.uuid)}
+                />
               </span>
-              {props.election.election_status === "Setting up" && (
-                <span className="level-right">
-                  <i
-                    className="close-question fa-solid fa-trash"
-                    onClick={() => {
-                      props.deleteTrustee(t.uuid);
-                    }}
-                  />
-                </span>
-              )}
-            </div>
-
-            <p className="mt-0">
-              <span className="has-text-weight-bold is-size-4">{t.name}</span>
-              <br />
-              <tt>
-                {t.trustee_login_id}
-                <br />
-                {t.email}
-              </tt>
-            </p>
-
-            {t.public_key_hash ? (
-              <div className="mt-4">
-                Código de Clave Pública:{" "}
-                <p className="overflow-auto">
-                  <tt>{t.public_key_hash}</tt>
-                </p>
-              </div>
-            ) : (
-              <p className="mt-4">Custodio aún no sube su clave pública</p>
             )}
-
-            {(props.election.election_status === electionStatus.tallyComputed ||
-              props.election.election_status ===
-                electionStatus.decryptionsUploaded ||
-              props.election.election_status ===
-                electionStatus.decryptionsCombined ||
-              props.election.election_status ===
-                electionStatus.resultsReleased) && <InfoTrustee trustee={t} />}
           </div>
-        );
-      })}
+
+          <p className="mt-0">
+            <span className="has-text-weight-bold is-size-4">{trustee.name}</span>
+            <br />
+            <tt>
+              {trustee.username}
+              <br />
+              {trustee.email}
+            </tt>
+          </p>
+
+          {trustee.public_key_hash ? (
+            <div className="mt-4">
+              Código de Clave Pública:{" "}
+              <p className="overflow-auto">
+                <tt>{trustee.public_key_hash}</tt>
+              </p>
+            </div>
+          ) : (
+            <p className="mt-4">Custodio aún no sube su clave pública</p>
+          )}
+
+          {[
+            electionStatus.tallyComputed,
+            electionStatus.decryptionsUploaded,
+            electionStatus.decryptionsCombined,
+            electionStatus.resultsReleased,
+          ].includes(election.status) && <InfoTrustee trustee={trustee} />}
+        </div>
+      ))}
     </div>
   );
 }

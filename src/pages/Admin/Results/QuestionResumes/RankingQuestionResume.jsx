@@ -37,7 +37,7 @@ export default function RankingQuestionResume({ result, question }) {
     talliesresumes: talliesResumes,
   } = result
   const {
-    closed_options_list: candidatesNames,
+    formal_options: candidatesNames,
   } = question
 
   const chartsData = parseResult(candidates, candidatesNames, roundResumes, talliesResumes)
@@ -46,7 +46,7 @@ export default function RankingQuestionResume({ result, question }) {
     <div style={{ marginTop: "1rem" }} className="is-size-6">
       <ResumeTables
         {...result}
-        includeInformals={question.include_blank_null}
+        includeInformals={question.include_informal_options}
       />
       <RoundsCharts
         {...chartsData}

@@ -33,7 +33,7 @@ function DeleteVoterModal(props) {
           "/" +
           shortName +
           "/voter/" +
-          props.voter.voter_login_id +
+          props.voter.username +
           "/delete",
         {
           method: "POST",
@@ -69,7 +69,7 @@ function DeleteVoterModal(props) {
           <div className="modal-card">
             <section className="modal-card-body">
               <h1 className="title">
-                El votante {props.voter.voter_name} esta siendo eliminado...
+                El votante {props.voter.name} esta siendo eliminado...
               </h1>
               <div className="field">
                 <label className="label label-form-election">
@@ -82,10 +82,10 @@ function DeleteVoterModal(props) {
           <div className="modal-card">
             <section className="modal-card-body">
               <h1 className="title">
-                Eliminar Votante {props.voter.voter_name}
+                Eliminar Votante {props.voter.name}
               </h1>
               <div className="">
-                El votante {props.voter.voter_name} sera eliminado
+                El votante {props.voter.name} sera eliminado
               </div>
             </section>
             <footer className="modal-card-foot">
@@ -123,7 +123,7 @@ function DeleteVoterModal(props) {
               <h1 className="title">Proceso terminado con exito</h1>
               <div className="field">
                 <label className="label label-form-election">
-                  El votante {props.voter.voter_name} ha sido eliminado con
+                  El votante {props.voter.name} ha sido eliminado con
                   exito!
                 </label>
               </div>
@@ -133,7 +133,7 @@ function DeleteVoterModal(props) {
               <h1 className="title">Ha ocurrido un error</h1>
               <div className="field">
                 <label className="label label-form-election">
-                  El votante {props.voter.voter_name} no ha podido ser
+                  El votante {props.voter.name} no ha podido ser
                   eliminado, intente nuevamente...
                 </label>
               </div>
@@ -148,7 +148,7 @@ function DeleteVoterModal(props) {
                   setFinishedDelete(false);
                   props.setVoterSelect((prevState) => ({
                     ...prevState,
-                    voter_name: "",
+                    name: "",
                   }));
                   props.onHide();
                 }}

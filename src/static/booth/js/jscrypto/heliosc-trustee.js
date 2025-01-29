@@ -17,7 +17,7 @@ import { Random } from "./random";
 import { BigInt } from "./bigint";
 import { BigInteger } from "./jsbn";
 
-class Heliosc {
+export default class Heliosc {
   constructor() {
     this.params = {};
     this.certificates = {};
@@ -169,21 +169,20 @@ class Heliosc {
     if (i < this.params.l) {
       let id = i + 1;
       console.log("Decrypting point shared with trustee #" + id + "...");
-      console.log(helios_c.points)
 
       let pk = { g: this.params.g, p: this.params.p, q: this.params.q };
       pk.y = new BigInt(this.certificates[i].signature_key);
-      let point = this.trustee.decrypt_point(id, pk, helios_c.points[i]);
+      let point = this.trustee.decrypt_point(id, pk, this.cont.helios_c.points[i]);
       if (point) {
         this.sum = this.sum.add(point).mod(pk.q);
 
-        this.ui_share_trustee(i + 1, helios_c.points);
+        this.ui_share_trustee(i + 1, this.cont.helios_c.points);
       } else {
         console.log("Point from trustee #" + id + " is not properly signed!");
       }
     } else {
       console.log("SUCCESS!");
-      this.cont();
+      this.cont.prepareUpload();
     }
   }
 

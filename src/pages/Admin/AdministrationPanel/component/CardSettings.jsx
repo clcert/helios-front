@@ -94,9 +94,9 @@ function CardSettings(props) {
             </span>
           </CopyToClipboard>
         </div>
-        {(props.election.election_status ===
+        {(props.election.status ===
           electionStatus.decryptionsCombined ||
-          props.election.election_status ===
+          props.election.status ===
             electionStatus.resultsReleased) && (
           <div onClick={bundleButton} className="content-card-admin">
             <div className="icon-card-admin d-inline-flex justify-content-center mr-2">

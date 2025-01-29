@@ -37,7 +37,7 @@ export default function InformalOptions({
           if (nullChecked) {
             setNullChecked(false)
           }
-          selectAnswers(numOfOptions)
+          selectAnswers(numOfOptions + 1)
         }
     }, [blankChecked]);
 
@@ -46,7 +46,7 @@ export default function InformalOptions({
         if (blankChecked) {
           setBlankChecked(false)
         }
-        selectAnswers(numOfOptions+1)
+        selectAnswers(numOfOptions + 2)
       }
     }, [nullChecked]);
 

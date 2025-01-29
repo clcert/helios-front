@@ -24,9 +24,7 @@ const editAnswer = (
   const ansList = getListFromObjects(updatedAnswers)
   const updatedQuestion = {
     ...question,
-    closed_options: generateClosedOptions(
-      question.include_blank_null, ansList
-    )
+    formal_options: ansList
   };
   updateThisQuestion(updatedQuestion);
 }
@@ -62,11 +60,10 @@ export default function QuestionCard({
 }) {
 
   const {
-    include_blank_null, num_of_winners,
-    q_type, q_text, q_description,
-    closed_options, options_specifications,
-    total_closed_options, total_options,
-    excluding_groups, group_votes,
+    include_informal_options, num_of_winners,
+    type, title, description,
+    formal_options, options_specifications,
+    excluded_options, grouped_options,
     min_answers, max_answers,
   } = question
 
@@ -75,23 +72,23 @@ export default function QuestionCard({
   const [imageObjects, setImageObjects] = useState([]);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [questionType, setQuestionType] = useState("CLOSED");
-  const [includesInformalAns, setIncludesInformalAns] = useState(include_blank_null);
+  const [includesInformalAns, setIncludesInformalAns] = useState(include_informal_options);
   const [numberOfWinners, setNumberOfWinners] = useState(true);
 
   /** Checks if the question characteristics are allowed */
   const [descriptionChecked, setDescriptionChecked] = useState(true);
   const [numberOfAnsChecked, setNumberOfAnsChecked] = useState(true);
 
-  const numOfClosedOptions = total_closed_options;
+  const numOfClosedOptions = formal_options.length;
   const initComponent = useCallback(() => {
     if (question !== undefined) {
       let answersAux = [];
       let imgAux = [];
 
-      for (let i = 0; i < total_options; i++) {
+      for (let i = 0; i < numOfClosedOptions; i++) {
         answersAux.push({
           key: i,
-          value: closed_options[i],
+          value: formal_options[i],
         });
         imgAux.push({
           key: i,
@@ -101,7 +98,7 @@ export default function QuestionCard({
       setAnswerObjects(answersAux);
       setImageObjects(imgAux);
       setQuestionNumber(numOfClosedOptions);
-      setQuestionType(q_type);
+      setQuestionType(type);
     }
   }, [numOfClosedOptions, question]);
 
@@ -127,11 +124,7 @@ export default function QuestionCard({
     let auxQuestion = question;
     
     const ansList = getListFromObjects(newAnsWithKeyList)
-    auxQuestion.closed_options = generateClosedOptions(
-      question.include_blank_null,
-      ansList
-    )
-    auxQuestion.total_closed_options = auxQuestion.closed_options.length
+    auxQuestion.formal_options = ansList
     auxQuestion.options_specifications = getListFromObjects(newImgWithKeyList);
     updateQuestion(questionId, auxQuestion);
     setAnswerObjects(newAnsWithKeyList);
@@ -163,10 +156,7 @@ export default function QuestionCard({
       }
     }
     let auxQuestion = question;
-    auxQuestion.closed_options = generateClosedOptions(
-      question.include_blank_null,
-      getListFromObjects(newAnsWithKeyList)
-    );
+    auxQuestion.formal_options = newAnsWithKeyList
     auxQuestion.options_specifications = getListFromObjects(newImgWithKeyList);
     updateQuestion(questionId, auxQuestion);
     setAnswerObjects(newAnsWithKeyList);
@@ -181,12 +171,8 @@ export default function QuestionCard({
      */
     setQuestionType(e.target.value);
     let auxQuestion = question;
-    auxQuestion.q_type = e.target.value;
-    auxQuestion.closed_options = generateClosedOptions(
-      question.include_blank_null,
-      []
-    );
-    auxQuestion.total_closed_options = 0
+    auxQuestion.type = e.target.value;
+    auxQuestion.formal_options= []
     auxQuestion.options_specifications = [];
     setAnswerObjects([]);
     setImageObjects([]);
@@ -205,10 +191,10 @@ export default function QuestionCard({
       <QuestionStatementInput
         questionId={questionId}
         disabledEdit={disabledEdit}
-        statement={q_text}
+        statement={title}
         handleChange={(e) => {
           let auxQuestion = question;
-          auxQuestion.q_text = e.target.value;
+          auxQuestion.title = e.target.value;
           updateQuestion(questionId, auxQuestion);
         }}
       />
@@ -223,44 +209,42 @@ export default function QuestionCard({
         handleChange={(e) => {
           const includes = e.target.checked
           let auxQuestion = question;
-          auxQuestion.include_blank_null = e.target.checked;
-          auxQuestion.closed_options = generateClosedOptions(
-            includes, getListFromObjects(answerObjects)
-          )
+          auxQuestion.include_informal_options = e.target.checked;
+          auxQuestion.formal_options = getListFromObjects(answerObjects)
           updateQuestion(questionId, auxQuestion);
           setIncludesInformalAns(!includesInformalAns);
         }}
         disabledEdit={disabledEdit}
-        checkedOption={include_blank_null}
+        checkedOption={include_informal_options}
       />
 
       <ExcludingGroups
         handleChange={(e) => {
           let auxQuestion = question;
-          auxQuestion.excluding_groups = e.target.checked;
+          auxQuestion.excluded_options = e.target.checked;
           updateQuestion(questionId, auxQuestion);
         }}
         disabledEdit={disabledEdit}
-        checkedOption={excluding_groups}
+        checkedOption={excluded_options}
       />
 
       <GroupApplicationsCheckbox
-        questionType={q_type}
+        questionType={type}
         disabledEdit={disabledEdit}
         handleChange={(e) => {
           let auxQuestion = question;
-          auxQuestion.group_votes = e.target.checked;
+          auxQuestion.grouped_options = e.target.checked;
           updateQuestion(questionId, auxQuestion);
         }}
-        checkedOption={group_votes}
+        checkedOption={grouped_options}
       />
 
       <DescriptionInput
         disabledEdit={disabledEdit}
-        description={q_description}
+        description={description}
         handleChange={(newDesc) => {
           let auxQuestion = question;
-          auxQuestion.q_description = newDesc;
+          auxQuestion.description = newDesc;
           updateQuestion(questionId, auxQuestion);
         }}
         checkOptions={setDescriptionChecked}
@@ -268,7 +252,7 @@ export default function QuestionCard({
 
       <NumberOfWinnersInput
         questionId={questionId}
-        questionType={q_type}
+        questionType={type}
         checkOptions={setNumberOfWinners}
         value={num_of_winners}
         handleNumOfWinners={(e) => {
@@ -281,16 +265,16 @@ export default function QuestionCard({
           num_of_winners === 0
         }
         maxCoteCondition={
-          parseInt(num_of_winners) > total_options
+          parseInt(num_of_winners) > formal_options.length
         }
-        numberOfAns={total_options}
+        numberOfAns={formal_options.length}
       />
 
       <NumberOfAnswersSetup
         disabledMinAns={
-          isSTVQuestion(q_type) || includesInformalAns
+          isSTVQuestion(type) || includesInformalAns
         }
-        numOfOptions={total_options}
+        numOfOptions={formal_options.length}
         minAnswers={min_answers}
         handleMinAns={(e) => {
           let auxQuestion = question;

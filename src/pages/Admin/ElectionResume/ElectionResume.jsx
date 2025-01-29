@@ -8,7 +8,10 @@ import { useParams } from "react-router";
 import { useEffect, useState, useCallback } from "react";
 import SubNavbar from "../component/SubNavbar";
 import {
-  getElectionResume, getStats, getElectionPublic
+  getStats, getElectionPublic,
+  getVotersInit,
+  getVotesInit,
+  getVotesEnd
 } from "../../../services/election";
 
 function ElectionResume() {
@@ -19,11 +22,11 @@ function ElectionResume() {
   /** @state {string} name of election */
   const [nameElection, setNameElection] = useState("");
 
-  const [weightsInit, setWeightsInit] = useState({});
+  const [votersWeightsInit, setVotersWeightsInit] = useState({});
 
-  const [weightsEnd, setWeightsEnd] = useState({});
+  const [votesWeightsInit, setVotesWeightInit] = useState({});
 
-  const [weightsElection, setWeightsElection] = useState({});
+  const [votesWeightEnd, setVotesWeightsEnd] = useState({});
   
   const [maxWeight, setMaxWeight] = useState();
 
@@ -48,22 +51,29 @@ function ElectionResume() {
     getElectionResult();
   }, [getElectionResult]);
 
-  useEffect(
-    function effectFunction() {
-      getElectionResume(shortName).then((data) => {
-        const { jsonResponse } = data;
-        setWeightsInit(JSON.parse(jsonResponse.weights_init));
-        setWeightsEnd(JSON.parse(jsonResponse.weights_end));
-        setWeightsElection(JSON.parse(jsonResponse.weights_election));
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [votersInitData, votesInitData, votesEndData, statsData] = await Promise.all([
+          getVotersInit(shortName),
+          getVotesInit(shortName),
+          getVotesEnd(shortName),
+          getStats(shortName)
+        ]);
+
+        setVotersWeightsInit(votersInitData.jsonResponse.voters_by_weight_init);
+        setVotesWeightInit(votesInitData.jsonResponse.votes_by_weight);
+        setVotesWeightsEnd(votesEndData.jsonResponse.votes_by_weight_end);
+        setNameElection(statsData.jsonResponse.name);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      } finally {
         setLoad(true);
-      });
-      getStats(shortName).then((data) => {
-        const { jsonResponse } = data;
-        setNameElection(jsonResponse.name);
-      });
-    },
-    [shortName]
-  );
+      }
+    };
+
+    fetchData();
+  }, [shortName]);
 
   return (
     <div id="content-home-admin">
@@ -81,9 +91,9 @@ function ElectionResume() {
 
       <InfoElection
         load={load}
-        weightsInit={weightsInit}
-        weightsEnd={weightsEnd}
-        weightsElection={weightsElection}
+        weightsInit={votersWeightsInit}
+        weightsEnd={votesWeightsInit}
+        weightsElection={votesWeightEnd}
         maxWeight={maxWeight}
       />
 

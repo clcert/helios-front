@@ -5,6 +5,8 @@ const electionSlice = createSlice({
   initialState: {
     actualElection: {},
     elections: [],
+    totalVoters: 0,
+    totalTrustees: 0,
   },
   reducers: {
     setElection: (state, action) => {
@@ -13,8 +15,14 @@ const electionSlice = createSlice({
     setElections: (state, action) => {
       state.elections = [...action.payload];
     },
+    setTotalVoters: (state, action) => {
+      state.totalVoters = action.payload;
+    },
+    setTotalTrustees: (state, action) => {
+      state.totalTrustees = action.payload
+    }
   },
 });
 
-export const { setElection, setElections } = electionSlice.actions;
+export const { setElection, setElections, setTotalVoters, setTotalTrustees } = electionSlice.actions;
 export default electionSlice.reducer;

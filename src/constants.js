@@ -61,6 +61,8 @@ export const permanentOptions = {
 
 export const electionStatus = {
   settingUp: "Setting up",
+  readyForKeyGeneration: "Ready for key generation",
+  readyForOpening: "Ready for opening",
   started: "Started",
   ended: "Ended",
   computingTally: "Computing Tally",
@@ -70,8 +72,20 @@ export const electionStatus = {
   resultsReleased: "Results released",
 };
 
+export const trusteeStep = {
+  config_step: 0,
+  secret_key_step: 1,
+  certificates_step: 2,
+  coefficients_step: 3,
+  points_step: 4,
+  waiting_decryptions: 5,
+  decryptions_sent: 6,
+}
+
 export const electionStatusTranslate = {
   "Setting up": "En configuración",
+  "Ready for key generation": "Listo para generación de claves",
+  "Ready for opening": "Listo para apertura",
   "Started": "Iniciada",
   "Ended": "Finalizada",
   "Computing Tally": "Computando tally",
